@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать клиента - Информационная система логистики</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    
+    <div class="container mt-4">
+        <div class="mb-3">
+            <a href="/ui/clients" class="btn btn-secondary">Назад к клиентам</a>
+        </div>
+        
+        <h1>Создание нового клиента</h1>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <form method="post" th:action="@{/ui/clients}" th:object="${client}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название компании *</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                        <small class="form-text text-muted">Макс. 150 символов</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="contactPerson" class="form-label">Контактное лицо</label>
+                        <input type="text" class="form-control" id="contactPerson" th:field="*{contactPerson}">
+                        <small class="form-text text-muted">Макс. 100 символов</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Телефон</label>
+                        <input type="tel" class="form-control" id="phone" th:field="*{phone}">
+                        <small class="form-text text-muted">Макс. 30 символов</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}">
+                        <small class="form-text text-muted">Макс. 100 символов</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="taxNumber" class="form-label">ИНН</label>
+                        <input type="text" class="form-control" id="taxNumber" th:field="*{taxNumber}">
+                        <small class="form-text text-muted">Макс. 20 символов</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="city" class="form-label">Город</label>
+                        <input type="text" class="form-control" id="city" th:field="*{city}">
+                        <small class="form-text text-muted">Макс. 100 символов</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Адрес</label>
+                        <input type="text" class="form-control" id="address" th:field="*{address}">
+                        <small class="form-text text-muted">Макс. 255 символов</small>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                        <a href="/ui/clients" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

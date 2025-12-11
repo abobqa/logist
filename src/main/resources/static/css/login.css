@@ -1,0 +1,260 @@
+/* Login Page Styles - Информационно-справочный сервис логистической компании */
+
+/* Fullscreen layout */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* Контейнер: фон на весь экран */
+.login-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ФОТО ГРУЗОВИКА НА ВЕСЬ ЭКРАН */
+.login-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/truck.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+
+/* Немного затемнения для лучшей читаемости */
+.login-background::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Красивая надпись на фоне (левая часть) */
+.service-brand {
+    position: absolute;
+    left: 5%;
+    bottom: 8%;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+    max-width: 400px;
+}
+
+.service-brand::before {
+    content: "";
+    position: absolute;
+    left: -15px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, #ff6b35, #f7931e);
+    border-radius: 2px;
+}
+
+/* ПРАВОСТОРОННИЙ ПРЯМОУГОЛЬНИК С ФОРМОЙ */
+.login-panel {
+    position: absolute;
+    top: 15vh;
+    right: 5%;
+    width: 400px;
+    max-width: 90%;
+    z-index: 2;
+}
+
+.login-panel .card {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.login-title {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.service-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid rgba(221, 221, 221, 0.8);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 1);
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+}
+
+/* Кнопки в теплых тонах, подходящих к фону */
+.btn-primary {
+    padding: 10px;
+    font-size: 17px;
+    border-radius: 8px;
+    background-color: #ff6b35;
+    border-color: #ff6b35;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #e55a2b;
+    border-color: #e55a2b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+}
+
+.btn-secondary {
+    background-color: rgba(139, 69, 19, 0.8);
+    border-color: rgba(139, 69, 19, 0.8);
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(101, 50, 14, 0.9);
+    border-color: rgba(101, 50, 14, 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4);
+}
+
+/* Адаптив для телефонов */
+@media (max-width: 900px) {
+    .login-panel {
+        top: 10vh;
+        right: 50%;
+        transform: translateX(50%);
+        width: 90%;
+        max-width: 400px;
+    }
+    
+    .service-brand {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 3%;
+        text-align: center;
+        font-size: 18px;
+        max-width: 90%;
+    }
+}
+
+/* Стили для страницы регистрации */
+.register-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ФОТО ГРУЗОВИКА НА ВЕСЬ ЭКРАН */
+.register-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/truck.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+
+.register-background::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Красивая надпись на фоне (левая часть) */
+.register-brand {
+    position: absolute;
+    left: 5%;
+    bottom: 8%;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+    max-width: 400px;
+}
+
+.register-brand::before {
+    content: "";
+    position: absolute;
+    left: -15px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, #ff6b35, #f7931e);
+    border-radius: 2px;
+}
+
+/* ПРАВОСТОРОННИЙ ПРЯМОУГОЛЬНИК С ФОРМОЙ (МЕНЬШЕ) */
+.register-panel {
+    position: absolute;
+    top: 12vh;
+    right: 5%;
+    width: 340px;
+    max-width: 90%;
+    z-index: 2;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.register-panel .card {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 900px) {
+    .register-panel {
+        top: 8vh;
+        right: 50%;
+        transform: translateX(50%);
+        width: 90%;
+        max-width: 340px;
+    }
+    
+    .register-brand {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 3%;
+        text-align: center;
+        font-size: 18px;
+        max-width: 90%;
+    }
+}

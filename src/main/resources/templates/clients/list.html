@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Клиенты - Информационная система логистики</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    
+    <div class="container mt-4">
+        <div class="mb-3">
+            <a href="/" class="btn btn-secondary">На главную</a>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Клиенты</h1>
+            <div sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                <a href="/ui/clients/new" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Создать клиента
+                </a>
+            </div>
+        </div>
+        
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <p class="text-muted">
+                    Управление компаниями-клиентами и их контактной информацией. Клиенты - это компании, которые заказывают транспортные услуги.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a th:href="@{/ui/clients(sortField=NAME, sortDirection=${sortField == 'NAME' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Название
+                                        <span th:if="${sortField == 'NAME'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>Контактное лицо</th>
+                                <th>Телефон</th>
+                                <th>Email</th>
+                                <th>
+                                    <a th:href="@{/ui/clients(sortField=CITY, sortDirection=${sortField == 'CITY' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Город
+                                        <span th:if="${sortField == 'CITY'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>Адрес</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${clients == null or clients.isEmpty()}">
+                                <td colspan="7" class="text-center text-muted">Клиенты не найдены</td>
+                            </tr>
+                            <tr th:each="client : ${clients}">
+                                <td th:text="${client.name}"></td>
+                                <td th:text="${client.contactPerson ?: '-'}"></td>
+                                <td th:text="${client.phone ?: '-'}"></td>
+                                <td th:text="${client.email ?: '-'}"></td>
+                                <td th:text="${client.city ?: '-'}"></td>
+                                <td th:text="${client.address ?: '-'}"></td>
+                                <td>
+                                    <a th:href="@{/ui/clients/{id}(id=${client.id})}" class="btn btn-sm btn-info" title="Просмотр">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <div sec:authorize="hasAnyRole('ADMIN','MANAGER')" style="display: inline;">
+                                        <a th:href="@{/ui/clients/{id}/edit(id=${client.id})}" class="btn btn-sm btn-warning" title="Редактировать">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                    <div sec:authorize="hasRole('ADMIN')" style="display: inline;">
+                                        <form method="post" th:action="@{/ui/clients/{id}/delete(id=${client.id})}" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Удалить" onclick="return confirm('Вы уверены?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

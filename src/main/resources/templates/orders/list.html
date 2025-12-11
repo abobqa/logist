@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказы - Информационная система логистики</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    
+    <div class="container mt-4">
+        <div class="mb-3">
+            <a href="/" class="btn btn-secondary">На главную</a>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Заказы</h1>
+            <div sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                <a href="/ui/orders/new" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Создать заказ
+                </a>
+            </div>
+        </div>
+        
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <p class="text-muted">
+                    Управление транспортными заказами: создание, отслеживание статуса и управление маршрутами доставки.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a th:href="@{/ui/orders(sortField=ORDER_NUMBER, sortDirection=${sortField == 'ORDER_NUMBER' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Номер заказа
+                                        <span th:if="${sortField == 'ORDER_NUMBER'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/ui/orders(sortField=CLIENT_NAME, sortDirection=${sortField == 'CLIENT_NAME' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Клиент
+                                        <span th:if="${sortField == 'CLIENT_NAME'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/ui/orders(sortField=STATUS, sortDirection=${sortField == 'STATUS' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Статус
+                                        <span th:if="${sortField == 'STATUS'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>Откуда</th>
+                                <th>Куда</th>
+                                <th>
+                                    <a th:href="@{/ui/orders(sortField=PLANNED_PICKUP_DATE, sortDirection=${sortField == 'PLANNED_PICKUP_DATE' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Дата отправления
+                                        <span th:if="${sortField == 'PLANNED_PICKUP_DATE'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${orders == null or orders.isEmpty()}">
+                                <td colspan="7" class="text-center text-muted">Заказы не найдены</td>
+                            </tr>
+                            <tr th:each="order : ${orders}">
+                                <td th:text="${order.orderNumber}"></td>
+                                <td th:text="${order.clientName ?: '-'}"></td>
+                                <td>
+                                    <span th:if="${order.status != null and order.status.name() == 'NEW'}" class="badge bg-secondary">Новый</span>
+                                    <span th:if="${order.status != null and order.status.name() == 'IN_PROGRESS'}" class="badge bg-warning">В пути</span>
+                                    <span th:if="${order.status != null and order.status.name() == 'DELIVERED'}" class="badge bg-success">Доставлен</span>
+                                    <span th:if="${order.status != null and order.status.name() == 'CANCELED'}" class="badge bg-danger">Отменён</span>
+                                    <span th:if="${order.status == null}" class="text-muted">-</span>
+                                </td>
+                                <td th:text="${order.originCity ?: '-'}"></td>
+                                <td th:text="${order.destinationCity ?: '-'}"></td>
+                                <td th:text="${#temporals.format(order.plannedPickupDate, 'dd.MM.yyyy')}"></td>
+                                <td>
+                                    <a th:href="@{/ui/orders/{id}(id=${order.id})}" class="btn btn-sm btn-info" title="Просмотр">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <div sec:authorize="hasAnyRole('ADMIN','MANAGER')" style="display: inline;">
+                                        <a th:href="@{/ui/orders/{id}/edit(id=${order.id})}" class="btn btn-sm btn-warning" title="Редактировать">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                    <div sec:authorize="hasRole('ADMIN')" style="display: inline;">
+                                        <form method="post" th:action="@{/ui/orders/{id}/delete(id=${order.id})}" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Удалить" onclick="return confirm('Вы уверены?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать заказ - Информационная система логистики</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    
+    <div class="container mt-4">
+        <div class="mb-3">
+            <a href="/ui/orders" class="btn btn-secondary">Назад к заказам</a>
+        </div>
+        
+        <h1>Создание нового заказа</h1>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <form method="post" th:action="@{/ui/orders}" th:object="${order}">
+                    <div class="mb-3">
+                        <label for="clientId" class="form-label">Клиент *</label>
+                        <select class="form-select" id="clientId" th:field="*{clientId}" required>
+                            <option value="">-- Выберите клиента --</option>
+                            <option th:each="client : ${clients}" th:value="${client.id}" th:text="${client.name}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="plannedPickupDate" class="form-label">Дата отправления *</label>
+                            <input type="date" class="form-control" id="plannedPickupDate" th:field="*{plannedPickupDate}" required>
+                            <small class="form-text text-muted">Формат: dd/mm/yyyy</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="plannedDeliveryDate" class="form-label">Дата доставки *</label>
+                            <input type="date" class="form-control" id="plannedDeliveryDate" th:field="*{plannedDeliveryDate}" required>
+                            <small class="form-text text-muted">Формат: dd/mm/yyyy</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="originCity" class="form-label">Город отправления *</label>
+                            <input type="text" class="form-control" id="originCity" th:field="*{originCity}" required>
+                            <small class="form-text text-muted">Макс. 100 символов</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="originAddress" class="form-label">Адрес отправления</label>
+                            <input type="text" class="form-control" id="originAddress" th:field="*{originAddress}">
+                            <small class="form-text text-muted">Макс. 255 символов</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="destinationCity" class="form-label">Город доставки *</label>
+                            <input type="text" class="form-control" id="destinationCity" th:field="*{destinationCity}" required>
+                            <small class="form-text text-muted">Макс. 100 символов</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="destinationAddress" class="form-label">Адрес доставки</label>
+                            <input type="text" class="form-control" id="destinationAddress" th:field="*{destinationAddress}">
+                            <small class="form-text text-muted">Макс. 255 символов</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cargoWeight" class="form-label">Вес груза (кг)</label>
+                            <input type="number" class="form-control" id="cargoWeight" th:field="*{cargoWeight}" step="0.01">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cargoVolume" class="form-label">Объём груза (м³)</label>
+                            <input type="number" class="form-control" id="cargoVolume" th:field="*{cargoVolume}" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cargoDescription" class="form-label">Описание груза</label>
+                        <textarea class="form-control" id="cargoDescription" th:field="*{cargoDescription}" rows="3"></textarea>
+                        <small class="form-text text-muted">Макс. 500 символов</small>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">Назначение водителя и транспорта</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="driverId" class="form-label">Водитель</label>
+                            <select class="form-select" id="driverId" th:field="*{driverId}">
+                                <option value="">-- Выберите водителя --</option>
+                                <option th:each="driver : ${drivers}" th:value="${driver.id}" th:text="${driver.fullName}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="vehicleId" class="form-label">Транспорт</label>
+                            <select class="form-select" id="vehicleId" th:field="*{vehicleId}">
+                                <option value="">-- Выберите транспорт --</option>
+                                <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.registrationNumber + ' (' + vehicle.type + ')'}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Стоимость перевозки (₽)</label>
+                        <input type="number" class="form-control" id="price" th:field="*{price}" step="0.01" min="0">
+                        <small class="form-text text-muted">Укажите стоимость перевозки данного груза</small>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                        <a href="/ui/orders" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/date-format.js}"></script>
+</body>
+</html>

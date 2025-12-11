@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Транспорт - Информационная система логистики</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    
+    <div class="container mt-4">
+        <div class="mb-3">
+            <a href="/" class="btn btn-secondary">На главную</a>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Транспортные средства</h1>
+            <div sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                <a href="/ui/vehicles/new" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Добавить транспорт
+                </a>
+            </div>
+        </div>
+        
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <p class="text-muted">
+                    Управление автопарком: регистрация транспортных средств, отслеживание их статуса и технических характеристик.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a th:href="@{/ui/vehicles(sortField=REGISTRATION_NUMBER, sortDirection=${sortField == 'REGISTRATION_NUMBER' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Гос. номер
+                                        <span th:if="${sortField == 'REGISTRATION_NUMBER'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/ui/vehicles(sortField=TYPE, sortDirection=${sortField == 'TYPE' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Тип
+                                        <span th:if="${sortField == 'TYPE'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/ui/vehicles(sortField=CAPACITY_WEIGHT, sortDirection=${sortField == 'CAPACITY_WEIGHT' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Грузоподъёмность (кг)
+                                        <span th:if="${sortField == 'CAPACITY_WEIGHT'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>Объём (м³)</th>
+                                <th>
+                                    <a th:href="@{/ui/vehicles(sortField=STATUS, sortDirection=${sortField == 'STATUS' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                       class="text-decoration-none text-dark">
+                                        Статус
+                                        <span th:if="${sortField == 'STATUS'}">
+                                            <i th:class="${sortDirection == 'ASC' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${vehicles == null or vehicles.isEmpty()}">
+                                <td colspan="6" class="text-center text-muted">Транспорт не найден</td>
+                            </tr>
+                            <tr th:each="vehicle : ${vehicles}">
+                                <td th:text="${vehicle.registrationNumber}"></td>
+                                <td th:text="${vehicle.type ?: '-'}"></td>
+                                <td th:text="${vehicle.capacityWeight ?: '-'}"></td>
+                                <td th:text="${vehicle.capacityVolume ?: '-'}"></td>
+                                <td>
+                                    <span th:if="${vehicle.status != null and vehicle.status.name() == 'ACTIVE'}" class="badge bg-success">Активен</span>
+                                    <span th:if="${vehicle.status != null and vehicle.status.name() == 'IN_SERVICE'}" class="badge bg-info">В сервисе</span>
+                                    <span th:if="${vehicle.status != null and vehicle.status.name() == 'OUT_OF_SERVICE'}" class="badge bg-danger">Выведен из строя</span>
+                                    <span th:if="${vehicle.status == null}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/ui/vehicles/{id}(id=${vehicle.id})}" class="btn btn-sm btn-info" title="Просмотр">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <div sec:authorize="hasAnyRole('ADMIN','MANAGER')" style="display: inline;">
+                                        <a th:href="@{/ui/vehicles/{id}/edit(id=${vehicle.id})}" class="btn btn-sm btn-warning" title="Редактировать">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                    <div sec:authorize="hasRole('ADMIN')" style="display: inline;">
+                                        <form method="post" th:action="@{/ui/vehicles/{id}/delete(id=${vehicle.id})}" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Удалить" onclick="return confirm('Вы уверены?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

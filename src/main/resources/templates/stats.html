@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика - Информационная система логистики</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    
+    <div class="container">
+        <div class="mb-3">
+            <a href="/" class="btn btn-secondary">На главную</a>
+        </div>
+        
+        <h1>Статистика</h1>
+        
+        <!-- Заказы по статусам -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title mb-3">Заказы по статусам</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Статус</th>
+                                <th>Количество</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${statusStats == null or statusStats.isEmpty()}">
+                                <td colspan="2" class="text-center text-muted">Данные отсутствуют</td>
+                            </tr>
+                            <tr th:each="row : ${statusStats}">
+                                <td>
+                                    <span class="badge bg-secondary" th:text="${row.status}"></span>
+                                </td>
+                                <td th:text="${row.count}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ТОП клиентов -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title mb-3">ТОП клиентов</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Клиент</th>
+                                <th>Количество заказов</th>
+                                <th>Сумма по заказам</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${topClients == null or topClients.isEmpty()}">
+                                <td colspan="3" class="text-center text-muted">Данные отсутствуют</td>
+                            </tr>
+                            <tr th:each="row : ${topClients}">
+                                <td th:text="${row.clientName}"></td>
+                                <td th:text="${row.ordersCount}"></td>
+                                <td th:text="${row.totalPrice != null ? #numbers.formatDecimal(row.totalPrice, 0, 'COMMA', 2, 'POINT') + ' ₽' : '-'}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Загруженность транспорта -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title mb-3">Загруженность транспорта</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Регистрационный номер</th>
+                                <th>Количество заказов</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${vehicleLoad == null or vehicleLoad.isEmpty()}">
+                                <td colspan="2" class="text-center text-muted">Данные отсутствуют</td>
+                            </tr>
+                            <tr th:each="row : ${vehicleLoad}">
+                                <td th:text="${row.registrationNumber}"></td>
+                                <td th:text="${row.ordersCount}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+

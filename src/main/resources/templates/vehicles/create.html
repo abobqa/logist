@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить транспорт - Информационная система логистики</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    
+    <div class="container mt-4">
+        <div class="mb-3">
+            <a href="/ui/vehicles" class="btn btn-secondary">Назад к транспорту</a>
+        </div>
+        
+        <h1>Добавление нового транспорта</h1>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <form method="post" th:action="@{/ui/vehicles}" th:object="${vehicle}">
+                    <div class="mb-3">
+                        <label for="registrationNumber" class="form-label">Государственный номер *</label>
+                        <input type="text" class="form-control" id="registrationNumber" th:field="*{registrationNumber}" required>
+                        <small class="form-text text-muted">Макс. 20 символов. Например: АА 123 РФ</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Тип транспорта</label>
+                        <input type="text" class="form-control" id="type" th:field="*{type}">
+                        <small class="form-text text-muted">Макс. 50 символов. Например: Грузовик, Фургон</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="capacityWeight" class="form-label">Грузоподъёмность (кг) *</label>
+                        <input type="number" class="form-control" id="capacityWeight" th:field="*{capacityWeight}" step="0.01" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="capacityVolume" class="form-label">Объём (м³) *</label>
+                        <input type="number" class="form-control" id="capacityVolume" th:field="*{capacityVolume}" step="0.01" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Статус *</label>
+                        <select class="form-select" id="status" th:field="*{status}" required>
+                            <option value="">-- Выберите статус --</option>
+                            <option th:each="s : ${statuses}" th:value="${s}" 
+                                    th:text="${s == 'ACTIVE' ? 'Активен' : (s == 'IN_SERVICE' ? 'В сервисе' : (s == 'OUT_OF_SERVICE' ? 'Выведен из строя' : s))}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                        <a href="/ui/vehicles" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
