@@ -28,9 +28,10 @@ public class ClientController {
     public ResponseEntity<List<ClientDto>> getAllClients(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String city,
+            @RequestParam(required = false) Boolean active,
             @RequestParam(required = false) ClientSortField sortField,
             @RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection) {
-        return ResponseEntity.ok(clientService.getAll(name, city, sortField, sortDirection));
+        return ResponseEntity.ok(clientService.getAll(name, city, active, sortField, sortDirection));
     }
     
     @GetMapping("/{id}")

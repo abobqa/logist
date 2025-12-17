@@ -18,6 +18,7 @@ public class ClientDto {
     private String taxNumber;
     private String city;
     private String address;
+    private Boolean active;
     private LocalDateTime createdAt;
 }
 

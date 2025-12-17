@@ -8,7 +8,6 @@ import org.logistservice.logist.common.enums.SortDirection;
 import org.logistservice.logist.common.enums.VehicleSortField;
 import org.logistservice.logist.common.exception.NotFoundException;
 import org.logistservice.logist.driver.service.DriverService;
-import org.logistservice.logist.order.model.OrderStatus;
 import org.logistservice.logist.order.model.dto.OrderAssignmentCreateUpdateRequest;
 import org.logistservice.logist.order.model.dto.OrderAssignmentDto;
 import org.logistservice.logist.order.model.dto.OrderCreateUpdateRequest;
@@ -22,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,6 +36,7 @@ public class OrderPageController {
     
     @GetMapping
     public String listOrders(
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) OrderSortField sortField,
             @RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection,
             Model model) {
@@ -48,7 +47,8 @@ public class OrderPageController {
             sortDirection = SortDirection.DESC;
         }
         
-        List<OrderDto> orders = orderService.getAll(null, null, null, null, sortField, sortDirection);
+        List<OrderDto> orders = orderService.getAll(search, null, null, null, null, sortField, sortDirection);
+        model.addAttribute("search", search);
         model.addAttribute("orders", orders);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDirection", sortDirection);
@@ -67,7 +67,7 @@ public class OrderPageController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public String showCreateForm(Model model) {
         model.addAttribute("order", new OrderCreateUpdateRequest());
-        model.addAttribute("clients", clientService.getAll(null, null, null, null));
+        model.addAttribute("clients", clientService.getAll(null, null, null, null, null));
         model.addAttribute("drivers", driverService.getAll(null, true, DriverSortField.FULL_NAME, SortDirection.ASC));
         model.addAttribute("vehicles", vehicleService.getAll(null, null, VehicleSortField.REGISTRATION_NUMBER, SortDirection.ASC));
         return "orders/create";
@@ -113,7 +113,7 @@ public class OrderPageController {
         
         model.addAttribute("orderId", id);
         model.addAttribute("order", request);
-        model.addAttribute("clients", clientService.getAll(null, null, null, null));
+        model.addAttribute("clients", clientService.getAll(null, null, null, null, null));
         model.addAttribute("drivers", driverService.getAll(null, true, DriverSortField.FULL_NAME, SortDirection.ASC));
         model.addAttribute("vehicles", vehicleService.getAll(null, null, VehicleSortField.REGISTRATION_NUMBER, SortDirection.ASC));
         return "orders/edit";

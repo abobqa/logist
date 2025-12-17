@@ -29,6 +29,7 @@ public class OrderController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','OPERATOR')")
     public ResponseEntity<List<OrderDto>> getAllOrders(
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long clientId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
@@ -45,7 +46,7 @@ public class OrderController {
             }
         }
         
-        return ResponseEntity.ok(orderService.getAll(orderStatus, clientId, fromDate, toDate, sortField, sortDirection));
+        return ResponseEntity.ok(orderService.getAll(search, orderStatus, clientId, fromDate, toDate, sortField, sortDirection));
     }
     
     @GetMapping("/{id}")

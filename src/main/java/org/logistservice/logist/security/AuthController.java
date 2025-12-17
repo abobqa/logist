@@ -67,8 +67,14 @@ public class AuthController {
             selectedRole = requestedRole;
         }
         
-        Role userRole = roleRepository.findByName(selectedRole)
-                .orElseThrow(() -> new RuntimeException("Role " + selectedRole + " not found"));
+        // Пытаемся найти роль, если не найдена - создаем её
+        Role userRole = roleRepository.findByName(selectedRole).orElseGet(() -> {
+            Role newRole = Role.builder()
+                    .name(selectedRole)
+                    .users(new HashSet<>())
+                    .build();
+            return roleRepository.save(newRole);
+        });
         
         User user = User.builder()
                 .username(request.getUsername())

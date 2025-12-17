@@ -38,11 +38,26 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         
+        <!-- Поиск -->
         <div class="card mb-4">
             <div class="card-body">
-                <p class="text-muted">
-                    Управление транспортными заказами: создание, отслеживание статуса и управление маршрутами доставки.
-                </p>
+                <form method="get" th:action="@{/ui/orders}" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="search" class="form-label">Поиск</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               th:value="${search}" placeholder="Поиск по номеру заказа, клиенту, городу отправления/назначения...">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search"></i> Найти
+                        </button>
+                        <a th:href="@{/ui/orders}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Сбросить
+                        </a>
+                    </div>
+                    <input type="hidden" name="sortField" th:value="${sortField}">
+                    <input type="hidden" name="sortDirection" th:value="${sortDirection}">
+                </form>
             </div>
         </div>
         
@@ -53,7 +68,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                    <a th:href="@{/ui/orders(sortField=ORDER_NUMBER, sortDirection=${sortField == 'ORDER_NUMBER' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                    <a th:href="@{/ui/orders(search=${search}, sortField=ORDER_NUMBER, sortDirection=${sortField == 'ORDER_NUMBER' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
                                        class="text-decoration-none text-dark">
                                         Номер заказа
                                         <span th:if="${sortField == 'ORDER_NUMBER'}">
@@ -62,7 +77,7 @@
                                     </a>
                                 </th>
                                 <th>
-                                    <a th:href="@{/ui/orders(sortField=CLIENT_NAME, sortDirection=${sortField == 'CLIENT_NAME' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                    <a th:href="@{/ui/orders(search=${search}, sortField=CLIENT_NAME, sortDirection=${sortField == 'CLIENT_NAME' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
                                        class="text-decoration-none text-dark">
                                         Клиент
                                         <span th:if="${sortField == 'CLIENT_NAME'}">
@@ -71,7 +86,7 @@
                                     </a>
                                 </th>
                                 <th>
-                                    <a th:href="@{/ui/orders(sortField=STATUS, sortDirection=${sortField == 'STATUS' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                    <a th:href="@{/ui/orders(search=${search}, sortField=STATUS, sortDirection=${sortField == 'STATUS' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
                                        class="text-decoration-none text-dark">
                                         Статус
                                         <span th:if="${sortField == 'STATUS'}">
@@ -82,7 +97,7 @@
                                 <th>Откуда</th>
                                 <th>Куда</th>
                                 <th>
-                                    <a th:href="@{/ui/orders(sortField=PLANNED_PICKUP_DATE, sortDirection=${sortField == 'PLANNED_PICKUP_DATE' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                    <a th:href="@{/ui/orders(search=${search}, sortField=PLANNED_PICKUP_DATE, sortDirection=${sortField == 'PLANNED_PICKUP_DATE' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
                                        class="text-decoration-none text-dark">
                                         Дата отправления
                                         <span th:if="${sortField == 'PLANNED_PICKUP_DATE'}">

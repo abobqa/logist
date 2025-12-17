@@ -25,7 +25,7 @@ public class ClientServiceImpl implements ClientService {
     }
     
     @Override
-    public List<ClientDto> getAll(String nameFilter, String cityFilter, ClientSortField sortField, SortDirection sortDirection) {
+    public List<ClientDto> getAll(String nameFilter, String cityFilter, Boolean active, ClientSortField sortField, SortDirection sortDirection) {
         List<Client> clients = clientRepository.findAll();
         
         List<ClientDto> result = clients.stream()
@@ -36,7 +36,9 @@ public class ClientServiceImpl implements ClientService {
                     boolean cityMatch = !StringUtils.hasText(cityFilter) ||
                             (client.getCity() != null && 
                              client.getCity().toLowerCase().contains(cityFilter.toLowerCase()));
-                    return nameMatch && cityMatch;
+                    boolean activeMatch = active == null || 
+                            (client.getActive() != null && client.getActive().equals(active));
+                    return nameMatch && cityMatch && activeMatch;
                 })
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -86,6 +88,7 @@ public class ClientServiceImpl implements ClientService {
                 .taxNumber(request.getTaxNumber())
                 .city(request.getCity())
                 .address(request.getAddress())
+                .active(request.getActive() != null ? request.getActive() : true)
                 .createdAt(LocalDateTime.now())
                 .build();
         
@@ -121,6 +124,7 @@ public class ClientServiceImpl implements ClientService {
                 .taxNumber(entity.getTaxNumber())
                 .city(entity.getCity())
                 .address(entity.getAddress())
+                .active(entity.getActive() != null ? entity.getActive() : true)
                 .createdAt(entity.getCreatedAt())
                 .build();
     }
@@ -133,6 +137,9 @@ public class ClientServiceImpl implements ClientService {
         entity.setTaxNumber(request.getTaxNumber());
         entity.setCity(request.getCity());
         entity.setAddress(request.getAddress());
+        if (request.getActive() != null) {
+            entity.setActive(request.getActive());
+        }
     }
 }
 

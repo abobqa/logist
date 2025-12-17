@@ -8,7 +8,7 @@ import org.logistservice.logist.common.enums.SortDirection;
 import java.util.List;
 
 public interface ClientService {
-    List<ClientDto> getAll(String nameFilter, String cityFilter, ClientSortField sortField, SortDirection sortDirection);
+    List<ClientDto> getAll(String nameFilter, String cityFilter, Boolean active, ClientSortField sortField, SortDirection sortDirection);
     ClientDto getById(Long id);
     ClientDto create(ClientCreateUpdateRequest request);
     ClientDto update(Long id, ClientCreateUpdateRequest request);

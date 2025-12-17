@@ -53,6 +53,10 @@ public class Client {
     @Column(length = 255)
     private String address;
     
+    @Column(nullable = true)
+    @Builder.Default
+    private Boolean active = true;
+    
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     

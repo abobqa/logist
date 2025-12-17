@@ -19,6 +19,7 @@ import org.logistservice.logist.order.repository.OrderStatusHistoryRepository;
 import org.logistservice.logist.security.CustomUserDetails;
 import org.logistservice.logist.user.model.User;
 import org.logistservice.logist.user.repository.UserRepository;
+import org.springframework.util.StringUtils;
 import org.logistservice.logist.vehicle.model.Vehicle;
 import org.logistservice.logist.vehicle.repository.VehicleRepository;
 import org.springframework.security.core.Authentication;
@@ -66,12 +67,18 @@ public class OrderServiceImpl implements OrderService {
     
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDto> getAll(OrderStatus status, Long clientId, LocalDate fromDate, LocalDate toDate,
+    public List<OrderDto> getAll(String search, OrderStatus status, Long clientId, LocalDate fromDate, LocalDate toDate,
                                  OrderSortField sortField, SortDirection sortDirection) {
         List<Order> orders = orderRepository.findAllWithClientAndManager();
         
         List<OrderDto> result = orders.stream()
                 .filter(order -> {
+                    boolean searchMatch = !StringUtils.hasText(search) || 
+                            (order.getOrderNumber() != null && order.getOrderNumber().toLowerCase().contains(search.toLowerCase())) ||
+                            (order.getClient() != null && order.getClient().getName() != null && 
+                             order.getClient().getName().toLowerCase().contains(search.toLowerCase())) ||
+                            (order.getOriginCity() != null && order.getOriginCity().toLowerCase().contains(search.toLowerCase())) ||
+                            (order.getDestinationCity() != null && order.getDestinationCity().toLowerCase().contains(search.toLowerCase()));
                     boolean statusMatch = status == null || order.getStatus() == status;
                     boolean clientMatch = clientId == null || 
                             (order.getClient() != null && order.getClient().getId().equals(clientId));
@@ -90,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
                             dateMatch = false;
                         }
                     }
-                    return statusMatch && clientMatch && dateMatch;
+                    return searchMatch && statusMatch && clientMatch && dateMatch;
                 })
                 .map(this::toOrderDto)
                 .collect(Collectors.toList());

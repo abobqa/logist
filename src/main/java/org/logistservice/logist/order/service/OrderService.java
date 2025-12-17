@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface OrderService {
-    List<OrderDto> getAll(OrderStatus status, Long clientId, LocalDate fromDate, LocalDate toDate, 
+    List<OrderDto> getAll(String search, OrderStatus status, Long clientId, LocalDate fromDate, LocalDate toDate, 
                           OrderSortField sortField, SortDirection sortDirection);
     OrderDetailsDto getById(Long id);
     OrderDto create(OrderCreateUpdateRequest request);

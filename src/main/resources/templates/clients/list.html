@@ -38,11 +38,34 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         
+        <!-- Поиск и фильтры -->
         <div class="card mb-4">
             <div class="card-body">
-                <p class="text-muted">
-                    Управление компаниями-клиентами и их контактной информацией. Клиенты - это компании, которые заказывают транспортные услуги.
-                </p>
+                <form method="get" th:action="@{/ui/clients}" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Поиск</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               th:value="${search}" placeholder="Поиск по названию...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="active" class="form-label">Статус</label>
+                        <select class="form-select" id="active" name="active">
+                            <option value="">Все</option>
+                            <option value="true" th:selected="${active == true}">Активные</option>
+                            <option value="false" th:selected="${active == false}">Неактивные</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search"></i> Найти
+                        </button>
+                        <a th:href="@{/ui/clients}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Сбросить
+                        </a>
+                    </div>
+                    <input type="hidden" name="sortField" th:value="${sortField}">
+                    <input type="hidden" name="sortDirection" th:value="${sortDirection}">
+                </form>
             </div>
         </div>
         
@@ -53,7 +76,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                    <a th:href="@{/ui/clients(sortField=NAME, sortDirection=${sortField == 'NAME' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                    <a th:href="@{/ui/clients(search=${search}, active=${active}, sortField=NAME, sortDirection=${sortField == 'NAME' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
                                        class="text-decoration-none text-dark">
                                         Название
                                         <span th:if="${sortField == 'NAME'}">
@@ -65,7 +88,7 @@
                                 <th>Телефон</th>
                                 <th>Email</th>
                                 <th>
-                                    <a th:href="@{/ui/clients(sortField=CITY, sortDirection=${sortField == 'CITY' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
+                                    <a th:href="@{/ui/clients(search=${search}, active=${active}, sortField=CITY, sortDirection=${sortField == 'CITY' and sortDirection == 'ASC' ? 'DESC' : 'ASC'})}" 
                                        class="text-decoration-none text-dark">
                                         Город
                                         <span th:if="${sortField == 'CITY'}">
@@ -74,12 +97,13 @@
                                     </a>
                                 </th>
                                 <th>Адрес</th>
+                                <th>Статус</th>
                                 <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${clients == null or clients.isEmpty()}">
-                                <td colspan="7" class="text-center text-muted">Клиенты не найдены</td>
+                                <td colspan="8" class="text-center text-muted">Клиенты не найдены</td>
                             </tr>
                             <tr th:each="client : ${clients}">
                                 <td th:text="${client.name}"></td>
@@ -88,6 +112,10 @@
                                 <td th:text="${client.email ?: '-'}"></td>
                                 <td th:text="${client.city ?: '-'}"></td>
                                 <td th:text="${client.address ?: '-'}"></td>
+                                <td>
+                                    <span th:if="${client.active}" class="badge bg-success">Активен</span>
+                                    <span th:unless="${client.active}" class="badge bg-secondary">Неактивен</span>
+                                </td>
                                 <td>
                                     <a th:href="@{/ui/clients/{id}(id=${client.id})}" class="btn btn-sm btn-info" title="Просмотр">
                                         <i class="bi bi-eye"></i>

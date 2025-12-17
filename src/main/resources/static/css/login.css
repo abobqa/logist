@@ -1,6 +1,3 @@
-/* Login Page Styles - Информационно-справочный сервис логистической компании */
-
-/* Fullscreen layout */
 body, html {
     margin: 0;
     padding: 0;
@@ -17,7 +14,6 @@ body, html {
     overflow: hidden;
 }
 
-/* ФОТО ГРУЗОВИКА НА ВЕСЬ ЭКРАН */
 .login-background {
     position: absolute;
     top: 0;
@@ -28,9 +24,19 @@ body, html {
     background-size: cover;
     background-position: center;
     z-index: 1;
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
 }
 
-/* Немного затемнения для лучшей читаемости */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .login-background::before {
     content: "";
     position: absolute;
@@ -38,7 +44,6 @@ body, html {
     background: rgba(0, 0, 0, 0.2);
 }
 
-/* Красивая надпись на фоне (левая часть) */
 .service-brand {
     position: absolute;
     left: 5%;
@@ -111,7 +116,6 @@ body, html {
     box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
 }
 
-/* Кнопки в теплых тонах, подходящих к фону */
 .btn-primary {
     padding: 10px;
     font-size: 17px;
@@ -184,6 +188,8 @@ body, html {
     background-size: cover;
     background-position: center;
     z-index: 1;
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
 }
 
 .register-background::before {
@@ -219,42 +225,47 @@ body, html {
     border-radius: 2px;
 }
 
-/* ПРАВОСТОРОННИЙ ПРЯМОУГОЛЬНИК С ФОРМОЙ (МЕНЬШЕ) */
+/* Уменьшение ширины панели и элементов */
 .register-panel {
-    position: absolute;
-    top: 12vh;
+    position: fixed;  /* Используем fixed вместо absolute */
+    top: 15vh;
     right: 5%;
-    width: 340px;
+    width: 280px; /* Уменьшено с 320px */
     max-width: 90%;
     z-index: 2;
-    max-height: 85vh;
+    max-height: 80vh;
     overflow-y: auto;
+    padding: 20px; /* Добавим отступы для улучшения внешнего вида */
+}
+
+
+.register-panel input,
+.register-panel select,
+.register-panel button {
+    font-size: 14px; /* Уменьшение размера шрифта */
+    padding: 8px 12px; /* Уменьшение отступов */
 }
 
 .register-panel .card {
-    width: 100%;
-    border: none;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    padding: 20px; /* Уменьшение отступов внутри карточки */
 }
 
-@media (max-width: 900px) {
+/* Переопределение стилей Bootstrap для полей ввода */
+.form-control, .form-select {
+    font-size: 14px;  /* Уменьшение шрифта */
+    padding: 8px 12px;  /* Уменьшение отступов */
+}
+
+@media (max-width: 600px) {
     .register-panel {
-        top: 8vh;
-        right: 50%;
-        transform: translateX(50%);
-        width: 90%;
-        max-width: 340px;
-    }
-    
-    .register-brand {
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 3%;
-        text-align: center;
-        font-size: 18px;
+        width: 100%;
         max-width: 90%;
+        padding: 10px;
+    }
+
+    .register-panel input,
+    .register-panel select,
+    .register-panel button {
+        font-size: 12px;  /* Меньший шрифт для мобильных устройств */
     }
 }

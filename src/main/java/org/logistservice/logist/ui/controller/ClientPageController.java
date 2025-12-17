@@ -25,6 +25,8 @@ public class ClientPageController {
     
     @GetMapping
     public String listClients(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Boolean active,
             @RequestParam(required = false) ClientSortField sortField,
             @RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection,
             Model model) {
@@ -34,7 +36,13 @@ public class ClientPageController {
             sortField = ClientSortField.NAME;
         }
         
-        List<ClientDto> clients = clientService.getAll(null, null, sortField, sortDirection);
+        // Если указан поиск, используем его как фильтр по названию
+        String nameFilter = search;
+        String cityFilter = null; // Можно расширить поиск
+        
+        List<ClientDto> clients = clientService.getAll(nameFilter, cityFilter, active, sortField, sortDirection);
+        model.addAttribute("search", search);
+        model.addAttribute("active", active);
         model.addAttribute("clients", clients);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDirection", sortDirection);
@@ -81,6 +89,7 @@ public class ClientPageController {
                 .taxNumber(client.getTaxNumber())
                 .city(client.getCity())
                 .address(client.getAddress())
+                .active(client.getActive())
                 .build();
         model.addAttribute("clientId", id);
         model.addAttribute("client", request);

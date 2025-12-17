@@ -56,13 +56,12 @@
                         
                         <div class="mb-3">
                             <label for="role" class="form-label">Роль</label>
-                            <select th:field="*{role}" class="form-select" id="role">
+                            <select th:field="*{role}" class="form-select" id="role" required>
                                 <option value="">Выберите роль</option>
                                 <option th:each="role : ${availableRoles}" 
                                         th:value="${role}" 
-                                        th:text="${role}">USER</option>
+                                        th:text="${role.name() == 'OPERATOR' ? 'Оператор' : (role.name() == 'MANAGER' ? 'Менеджер' : role.name())}"></option>
                             </select>
-                            <small class="form-text text-muted">По умолчанию будет назначена роль USER. Роли ADMIN и MANAGER могут быть назначены только администратором.</small>
                             <div class="text-danger" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
                         </div>
                         

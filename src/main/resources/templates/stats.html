@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" th:href="@{/img/icon.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link th:href="@{/css/main.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
@@ -22,26 +23,33 @@
         <div class="card mb-4">
             <div class="card-body">
                 <h2 class="card-title mb-3">Заказы по статусам</h2>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Статус</th>
-                                <th>Количество</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:if="${statusStats == null or statusStats.isEmpty()}">
-                                <td colspan="2" class="text-center text-muted">Данные отсутствуют</td>
-                            </tr>
-                            <tr th:each="row : ${statusStats}">
-                                <td>
-                                    <span class="badge bg-secondary" th:text="${row.status}"></span>
-                                </td>
-                                <td th:text="${row.count}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="statusChart" style="max-height: 300px;"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Статус</th>
+                                        <th>Количество</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${statusStats == null or statusStats.isEmpty()}">
+                                        <td colspan="2" class="text-center text-muted">Данные отсутствуют</td>
+                                    </tr>
+                                    <tr th:each="row : ${statusStats}">
+                                        <td>
+                                            <span class="badge bg-secondary" th:text="${#strings.equals(row.status.name(), 'NEW') ? 'Новый' : (#strings.equals(row.status.name(), 'IN_PROGRESS') ? 'В процессе' : (#strings.equals(row.status.name(), 'DELIVERED') ? 'Доставлен' : 'Отменен'))}"></span>
+                                        </td>
+                                        <td th:text="${row.count}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -50,26 +58,33 @@
         <div class="card mb-4">
             <div class="card-body">
                 <h2 class="card-title mb-3">ТОП клиентов</h2>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Клиент</th>
-                                <th>Количество заказов</th>
-                                <th>Сумма по заказам</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:if="${topClients == null or topClients.isEmpty()}">
-                                <td colspan="3" class="text-center text-muted">Данные отсутствуют</td>
-                            </tr>
-                            <tr th:each="row : ${topClients}">
-                                <td th:text="${row.clientName}"></td>
-                                <td th:text="${row.ordersCount}"></td>
-                                <td th:text="${row.totalPrice != null ? #numbers.formatDecimal(row.totalPrice, 0, 'COMMA', 2, 'POINT') + ' ₽' : '-'}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="topClientsChart" style="max-height: 300px;"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Клиент</th>
+                                        <th>Количество заказов</th>
+                                        <th>Сумма по заказам</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${topClients == null or topClients.isEmpty()}">
+                                        <td colspan="3" class="text-center text-muted">Данные отсутствуют</td>
+                                    </tr>
+                                    <tr th:each="row : ${topClients}">
+                                        <td th:text="${row.clientName}"></td>
+                                        <td th:text="${row.ordersCount}"></td>
+                                        <td th:text="${row.totalPrice != null ? #numbers.formatDecimal(row.totalPrice, 0, 'COMMA', 2, 'POINT') + ' ₽' : '-'}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,30 +93,163 @@
         <div class="card mb-4">
             <div class="card-body">
                 <h2 class="card-title mb-3">Загруженность транспорта</h2>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Регистрационный номер</th>
-                                <th>Количество заказов</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:if="${vehicleLoad == null or vehicleLoad.isEmpty()}">
-                                <td colspan="2" class="text-center text-muted">Данные отсутствуют</td>
-                            </tr>
-                            <tr th:each="row : ${vehicleLoad}">
-                                <td th:text="${row.registrationNumber}"></td>
-                                <td th:text="${row.ordersCount}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="vehicleLoadChart" style="max-height: 300px;"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Регистрационный номер</th>
+                                        <th>Количество заказов</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${vehicleLoad == null or vehicleLoad.isEmpty()}">
+                                        <td colspan="2" class="text-center text-muted">Данные отсутствуют</td>
+                                    </tr>
+                                    <tr th:each="row : ${vehicleLoad}">
+                                        <td th:text="${row.registrationNumber}"></td>
+                                        <td th:text="${row.ordersCount}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        // Функция для перевода статусов на русский
+        function translateStatus(status) {
+            const statusMap = {
+                'NEW': 'Новый',
+                'IN_PROGRESS': 'В процессе',
+                'DELIVERED': 'Доставлен',
+                'CANCELED': 'Отменен'
+            };
+            return statusMap[status] || status;
+        }
+        
+        // Подготовка данных для графиков
+        document.addEventListener('DOMContentLoaded', function() {
+            // График статусов заказов
+            const statusStatsJson = /*[[${statusStatsJson}]]*/ '[]';
+            const statusStats = JSON.parse(statusStatsJson);
+            
+            if (statusStats && statusStats.length > 0) {
+                const statusLabels = statusStats.map(item => translateStatus(item.status));
+                const statusCounts = statusStats.map(item => item.count);
+                const statusColors = ['#4CAF50', '#2196F3', '#FF9800', '#F44336'];
+                
+                new Chart(document.getElementById('statusChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusLabels,
+                        datasets: [{
+                            data: statusCounts,
+                            backgroundColor: statusColors.slice(0, statusLabels.length),
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // График топ клиентов
+            const topClientsJson = /*[[${topClientsJson}]]*/ '[]';
+            const topClients = JSON.parse(topClientsJson);
+            
+            if (topClients && topClients.length > 0) {
+                const clientLabels = topClients.map(item => item.clientName);
+                const clientCounts = topClients.map(item => item.ordersCount);
+                
+                new Chart(document.getElementById('topClientsChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: clientLabels,
+                        datasets: [{
+                            label: 'Количество заказов',
+                            data: clientCounts,
+                            backgroundColor: '#2196F3',
+                            borderColor: '#1976D2',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // График загруженности транспорта
+            const vehicleLoadJson = /*[[${vehicleLoadJson}]]*/ '[]';
+            const vehicleLoad = JSON.parse(vehicleLoadJson);
+            
+            if (vehicleLoad && vehicleLoad.length > 0) {
+                const vehicleLabels = vehicleLoad.map(item => item.registrationNumber);
+                const vehicleCounts = vehicleLoad.map(item => item.ordersCount);
+                
+                new Chart(document.getElementById('vehicleLoadChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: vehicleLabels,
+                        datasets: [{
+                            label: 'Количество заказов',
+                            data: vehicleCounts,
+                            backgroundColor: '#FF9800',
+                            borderColor: '#F57C00',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

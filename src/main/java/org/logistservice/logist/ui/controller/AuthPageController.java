@@ -37,7 +37,8 @@ public class AuthPageController {
     @GetMapping("/ui/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new RegisterUserRequest());
-        model.addAttribute("availableRoles", RoleName.values());
+        // Показываем только OPERATOR и MANAGER, исключаем USER и ADMIN
+        model.addAttribute("availableRoles", new RoleName[]{RoleName.OPERATOR, RoleName.MANAGER});
         return "auth/register";
     }
 
@@ -59,24 +60,30 @@ public class AuthPageController {
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("availableRoles", RoleName.values());
+            model.addAttribute("availableRoles", new RoleName[]{RoleName.OPERATOR, RoleName.MANAGER});
             return "auth/register";
         }
 
-        // По умолчанию назначаем роль USER, если не указана
-        RoleName requestedRole = request.getRole() != null ? request.getRole() : RoleName.USER;
-        
-        // Обычные пользователи могут регистрироваться только с ролями USER или OPERATOR
-        // ADMIN и MANAGER могут назначаться только администраторами
+        // Пользователи могут регистрироваться только с ролями OPERATOR или MANAGER
+        // ADMIN не может быть назначена при регистрации
         final RoleName selectedRole;
-        if (requestedRole == RoleName.ADMIN || requestedRole == RoleName.MANAGER) {
-            selectedRole = RoleName.USER; // Безопасность: принудительно устанавливаем USER
-        } else {
+        RoleName requestedRole = request.getRole();
+        if (requestedRole == null || requestedRole == RoleName.ADMIN || requestedRole == RoleName.USER) {
+            selectedRole = RoleName.OPERATOR; // По умолчанию OPERATOR
+        } else if (requestedRole == RoleName.MANAGER || requestedRole == RoleName.OPERATOR) {
             selectedRole = requestedRole;
+        } else {
+            selectedRole = RoleName.OPERATOR; // Безопасность: принудительно устанавливаем OPERATOR
         }
 
-        Role userRole = roleRepository.findByName(selectedRole)
-                .orElseThrow(() -> new IllegalStateException("Роль " + selectedRole + " не найдена"));
+        // Пытаемся найти роль, если не найдена - создаем её
+        Role userRole = roleRepository.findByName(selectedRole).orElseGet(() -> {
+            Role newRole = Role.builder()
+                    .name(selectedRole)
+                    .users(new java.util.HashSet<>())
+                    .build();
+            return roleRepository.save(newRole);
+        });
 
         User user = User.builder()
                 .username(request.getUsername())

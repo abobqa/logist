@@ -30,6 +30,8 @@ public class DriverPageController {
     
     @GetMapping
     public String listDrivers(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Boolean active,
             @RequestParam(required = false) DriverSortField sortField,
             @RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection,
             Model model) {
@@ -39,7 +41,9 @@ public class DriverPageController {
             sortField = DriverSortField.FULL_NAME;
         }
         
-        List<DriverDto> drivers = driverService.getAll(null, null, sortField, sortDirection);
+        List<DriverDto> drivers = driverService.getAll(search, active, sortField, sortDirection);
+        model.addAttribute("search", search);
+        model.addAttribute("active", active);
         model.addAttribute("drivers", drivers);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDirection", sortDirection);

@@ -33,6 +33,8 @@ public class ClientCreateUpdateRequest {
     
     @Size(max = 255)
     private String address;
+    
+    private Boolean active;
 }
 
 
